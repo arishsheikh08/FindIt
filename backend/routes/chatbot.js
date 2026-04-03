@@ -18,21 +18,27 @@ router.post('/', async (req, res) => {
 
     // Fetch the product catalog to give the AI context about the store
     const products = await Product.findAll();
-    const productList = products.map(p => `- ${p.name} ($${p.price.toFixed(2)}) [Category: ${p.category}]: ${p.description}`).join('\n');
+    const catalogText = products.map(p => `- ${p.name} ($${p.price.toFixed(2)}) [Category: ${p.category}]: ${p.description}`).join('\n');
 
-    // System instruction to guide the AI's behavior
-    const systemInstruction = `You are a helpful and polite AI shopping assistant for our e-commerce store. 
-Here is our current product catalog:
-${productList}
+    const prompt = `You are the enthusiastic, persuasive, and highly professional AI Concierge for 'FindIt', a premium e-commerce platform!
+Your sole purpose is to assist the user, drive sales, and convincingly recommend the products we have in our inventory. 
+Always maintain a bright, trustworthy, and engaging tone. Use emojis naturally. Do not sound robotic. 
 
-Assist the user by answering questions about our products, recommending items based on their queries, and helping them navigate. If they ask for something we don't have, politely inform them. Keep your responses concise and friendly.`;
+Here is the LIVE catalog of products currently available on FindIt:
+---
+${catalogText}
+---
+
+The user is saying: "${message}"
+
+If the user asks for recommendations, heavily highlight the best features of the available products and tell them WHY it's a great deal! If the user asks about something we don't have, politely steer them toward what we DO have. 
+Format your responses using clean Markdown paragraphs and bullet points for readability. Be persuasive, helpful, and concise!`;
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: systemInstruction 
+      model: "gemini-1.5-flash"
     });
 
-    const result = await model.generateContent(message);
+    const result = await model.generateContent(prompt);
     const response = await result.response;
     const reply = response.text();
     

@@ -30,7 +30,7 @@ const Header = ({ searchTerm, setSearchTerm, handleSearch }) => {
   return (
     <header className="app-header">
       <div className="header-top">
-        <Link to="/" className="logo">olx</Link>
+        <Link to="/" className="logo">FindIt</Link>
         
         <div className="location-picker" style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setShowLocation(!showLocation)}>
           <Search size={20} color="var(--olx-dark)" />
